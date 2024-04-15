@@ -1,0 +1,29 @@
+1. π_first_name, salary (σ_department_name='Engineering'(employees ⨝ departments))
+
+2. π_first_name, salary (employees)
+
+3. π_emp_id, first_name, last_name (σ_manager_id IS NOT NULL (employees))
+
+4. σ_salary > 60000 (employees)
+
+5. employees ⨝ departments
+
+6. employees × projects
+
+7. π_emp_id, first_name, last_name (employees - (π_emp_id, first_name, last_name (σ_manager_id IS NOT NULL (employees))))
+
+8. departments ⨝ projects
+
+9. π_department_name, location (departments)
+
+10. σ_budget > 100000 (projects)
+
+11. π_emp_id, first_name, last_name (σ_department_name='Sales' AND manager_id IS NOT NULL (employees ⨝ departments))
+
+12. π_emp_id, first_name, last_name (σ_department_name='Engineering'(employees)) ∪ π_emp_id, first_name, last_name (σ_department_name='Finance'(employees))
+
+13. π_emp_id, first_name, last_name (employees - (employees ⨝ projects))
+
+14. employees ⨝ projects
+
+15. π_emp_id, first_name, last_name (σ_salary < 50000 OR salary > 70000 (employees))
