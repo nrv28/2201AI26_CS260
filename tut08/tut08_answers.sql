@@ -2,7 +2,7 @@
 -- 1.	The .sql files are run automatically, so please ensure that there are no syntax errors in the file. If we are unable to run your file, you get an automatic reduction to 0 marks.
 -- Comment in MYSQL 
 
--- 1.
+-- 1. Create a trigger that automatically increases the salary by 10% for employees whose salary is below ?60000 when a new record is inserted into the employees table.
 DELIMITER //
 CREATE TRIGGER IncreaseSalaryTrigger
 BEFORE INSERT ON employees
@@ -16,7 +16,7 @@ END;
 DELIMITER ;
 
 
--- 2.
+--2. Create a trigger that prevents deleting records from the departments table if there are employees assigned to that department.
 DELIMITER //
 CREATE TRIGGER PreventDeleteDepartmentTrigger
 BEFORE DELETE ON departments
@@ -35,7 +35,7 @@ END;
 DELIMITER ;
 
 
--- 3.
+-- 3. Write a trigger that logs the details of any salary updates (old salary, new salary, employee name, and date) into a separate audit table.
 DELIMITER //
 CREATE TRIGGER SalaryUpdateAuditTrigger
 AFTER UPDATE ON employees
@@ -48,7 +48,7 @@ END;
 DELIMITER ;
 
 
--- 4.
+-- 4. Create a trigger that automatically assigns a department to an employee based on their salary range (e.g., salary <= ?60000 -> department_id = 3).
 DELIMITER //
 CREATE TRIGGER AssignDepartmentTrigger
 BEFORE INSERT ON employees
@@ -62,7 +62,7 @@ END;
 DELIMITER ;
 
 
--- 5.
+-- 5. Write a trigger that updates the salary of the manager (highest-paid employee) in each department whenever a new employee is hired in that department.
 DELIMITER //
 CREATE TRIGGER UpdateManagerSalaryTrigger
 AFTER INSERT ON employees
@@ -76,7 +76,7 @@ END;
 DELIMITER ;
 
 
--- 6.
+-- 6. Create a trigger that prevents updating the department_id of an employee if they have worked on projects.
 DELIMITER //
 CREATE TRIGGER PreventUpdateDepartmentTrigger
 BEFORE UPDATE ON employees
@@ -95,7 +95,7 @@ END;
 DELIMITER ;
 
 
--- 7.
+-- 7. Write a trigger that calculates and updates the average salary for each department whenever a salary change occurs.
 DELIMITER //
 CREATE TRIGGER UpdateAverageSalaryTrigger
 AFTER UPDATE ON employees
@@ -113,7 +113,7 @@ END;
 DELIMITER ;
 
 
--- 8.
+--8. Create a trigger that automatically deletes all records from the works_on table for an employee when that employee is deleted from the employees table.
 DELIMITER //
 CREATE TRIGGER DeleteWorksOnTrigger
 AFTER DELETE ON employees
@@ -125,7 +125,7 @@ END;
 DELIMITER ;
 
 
--- 9.
+--9. Write a trigger that prevents inserting a new employee if their salary is less than the minimum salary set for their department.
 DELIMITER //
 CREATE TRIGGER PreventInsertEmployeeTrigger
 BEFORE INSERT ON employees
@@ -144,7 +144,7 @@ END;
 DELIMITER ;
 
 
--- 10.
+--10. Create a trigger that automatically updates the total salary budget for a department whenever an employee's salary is updated.
 DELIMITER //
 CREATE TRIGGER UpdateTotalBudgetTrigger
 AFTER UPDATE ON employees
@@ -162,8 +162,7 @@ END;
 DELIMITER ;
 
 
--- 11.
--- create table email_queue
+-- 111. Write a trigger that sends an email notification to HR whenever a new employee is hired.
 CREATE TABLE email_queue (
     id INT AUTO_INCREMENT PRIMARY KEY,
     recipient_email VARCHAR(255) NOT NULL,
@@ -192,53 +191,7 @@ END;
 //
 DELIMITER ;
 
--- python code to sent emails (read data from email_queue)
--- import smtplib
--- import mysql.connector
--- from email.message import EmailMessage
-
--- # Connect to the database
--- db = mysql.connector.connect(
---     host="your_host",
---     user="your_username",
---     password="your_password",
---     database="your_database"
--- )
--- cursor = db.cursor()
-
--- # Select unsent emails from the email_queue table
--- cursor.execute("SELECT id, recipient_email, subject, message FROM email_queue WHERE sent_at IS NULL")
--- emails = cursor.fetchall()
-
--- # Send emails
--- for email in emails:
---     msg = EmailMessage()
---     msg.set_content(email[3])
---     msg["Subject"] = email[2]
---     msg["From"] = "your_email@example.com"  # Change this to your email address
---     msg["To"] = email[1]
-
---     try:
---         # Send the email
---         with smtplib.SMTP("smtp.yourmailserver.com", 587) as smtp:
---             smtp.starttls()
---             smtp.login("your_email@example.com", "your_password")  # Change this to your email and password
---             smtp.send_message(msg)
-
---         # Mark the email as sent in the database
---         cursor.execute("UPDATE email_queue SET sent_at = CURRENT_TIMESTAMP WHERE id = %s", (email[0],))
---         db.commit()
---     except Exception as e:
---         print(f"Failed to send email: {e}")
-
--- # Close the database connection
--- cursor.close()
--- db.close()
-
-
-
-
--- 12.
+-- 12. Create a trigger that prevents inserting a new department if the location is not specified.
 DELIMITER //
 CREATE TRIGGER PreventInsertDepartmentTrigger
 BEFORE INSERT ON departments
@@ -253,7 +206,7 @@ END;
 DELIMITER ;
 
 
--- 13.
+-- 13. Write a trigger that updates the department_name in the employees table when the corresponding department_name is updated in the departments table.
 DELIMITER //
 CREATE TRIGGER UpdateEmployeeDepartmentNameTrigger
 AFTER UPDATE ON departments
@@ -267,7 +220,7 @@ END;
 DELIMITER ;
 
 
--- 14.
+--14. Create a trigger that logs all insert, update, and delete operations on the employees table into a separate audit table.
 CREATE TABLE employee_audit (
     audit_id INT AUTO_INCREMENT PRIMARY KEY,
     operation_type VARCHAR(10) NOT NULL,
@@ -311,7 +264,7 @@ END;
 DELIMITER ;
 
 
--- 15.
+--15. Write a trigger that automatically generates an employee ID using a sequence whenever a new employee
 DELIMITER //
 CREATE TRIGGER GenerateEmployeeIdTrigger
 BEFORE INSERT ON employees
