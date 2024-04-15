@@ -1,0 +1,46 @@
+-- Creation of tables
+CREATE TABLE Institute (
+    Institute_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Location VARCHAR(100)
+);
+
+CREATE TABLE Academic_Section (
+    Academic_Section_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Institute_ID INT,
+    Head VARCHAR(100),
+    FOREIGN KEY (Institute_ID) REFERENCES Institute(Institute_ID)
+);
+
+CREATE TABLE Hostel_Section (
+    Hostel_Section_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Institute_ID INT,
+    Warden VARCHAR(100),
+    FOREIGN KEY (Institute_ID) REFERENCES Institute(Institute_ID)
+);
+
+CREATE TABLE Department (
+    Department_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100),
+    Institute_ID INT,
+    Head VARCHAR(100),
+    FOREIGN KEY (Institute_ID) REFERENCES Institute(Institute_ID)
+);
+
+-- Access data
+-- Retrieve academic sections of IIT Patna
+SELECT *
+FROM Academic_Section
+WHERE Institute_ID = (SELECT Institute_ID FROM Institute WHERE Name = 'IIT Patna');
+
+-- Retrieve hostel sections of IIT Patna
+SELECT *
+FROM Hostel_Section
+WHERE Institute_ID = (SELECT Institute_ID FROM Institute WHERE Name = 'IIT Patna');
+
+-- Retrieve departments of IIT Patna
+SELECT *
+FROM Department
+WHERE Institute_ID = (SELECT Institute_ID FROM Institute WHERE Name = 'IIT Patna');
