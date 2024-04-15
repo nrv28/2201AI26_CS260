@@ -1,326 +1,141 @@
 -- General Instructions
 -- 1.	The .sql files are run automatically, so please ensure that there are no syntax errors in the file. If we are unable to run your file, you get an automatic reduction to 0 marks.
 -- Comment in MYSQL 
-
--- 1.
-DELIMITER //
-CREATE TRIGGER IncreaseSalaryTrigger
-BEFORE INSERT ON employees
+-- Trigger to automatically increase salary by 10% for employees whose salary is below ?60000 when a new record is inserted into the employees table
+CREATE TRIGGER IncreaseSalaryTrigger BEFORE INSERT ON employees
 FOR EACH ROW
 BEGIN
     IF NEW.salary < 60000 THEN
         SET NEW.salary = NEW.salary * 1.10;
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 2.
-DELIMITER //
-CREATE TRIGGER PreventDeleteDepartmentTrigger
-BEFORE DELETE ON departments
+-- Trigger to prevent deleting records from the departments table if there are employees assigned to that department
+CREATE TRIGGER PreventDeleteTrigger BEFORE DELETE ON departments
 FOR EACH ROW
 BEGIN
-    DECLARE employee_count INT;
-    SELECT COUNT(*) INTO employee_count
-    FROM employees
-    WHERE department_id = OLD.department_id;
-    IF employee_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Cannot delete department with assigned employees';
+    DECLARE emp_count INT;
+    SELECT COUNT(*) INTO emp_count FROM employees WHERE department_id = OLD.department_id;
+    IF emp_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete department with assigned employees';
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 3.
-DELIMITER //
-CREATE TRIGGER SalaryUpdateAuditTrigger
-AFTER UPDATE ON employees
+-- Trigger to log salary updates into a separate audit table
+CREATE TRIGGER SalaryUpdateAuditTrigger AFTER UPDATE ON employees
 FOR EACH ROW
 BEGIN
-    INSERT INTO salary_audit (emp_id, old_salary, new_salary, employee_name, updated_at)
+    INSERT INTO salary_audit (emp_id, old_salary, new_salary, employee_name, update_date)
     VALUES (OLD.emp_id, OLD.salary, NEW.salary, CONCAT(NEW.first_name, ' ', NEW.last_name), NOW());
 END;
-//
-DELIMITER ;
 
-
--- 4.
-DELIMITER //
-CREATE TRIGGER AssignDepartmentTrigger
-BEFORE INSERT ON employees
+-- Trigger to automatically assign a department to an employee based on their salary range
+CREATE TRIGGER AssignDepartmentTrigger BEFORE INSERT ON employees
 FOR EACH ROW
 BEGIN
     IF NEW.salary <= 60000 THEN
         SET NEW.department_id = 3;
+    -- Add additional conditions for other salary ranges and corresponding department assignments
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 5.
-DELIMITER //
-CREATE TRIGGER UpdateManagerSalaryTrigger
-AFTER INSERT ON employees
+-- Trigger to update the salary of the manager (highest-paid employee) in each department whenever a new employee is hired in that department
+CREATE TRIGGER UpdateManagerSalaryTrigger AFTER INSERT ON employees
 FOR EACH ROW
 BEGIN
-    UPDATE employees
-    SET salary = (SELECT MAX(salary) FROM employees WHERE department_id = NEW.department_id)
-    WHERE emp_id = (SELECT manager_id FROM departments WHERE department_id = NEW.department_id);
+    UPDATE employees e
+    JOIN (
+        SELECT department_id, MAX(salary) AS max_salary FROM employees GROUP BY department_id
+    ) AS max_salaries ON e.department_id = max_salaries.department_id
+    SET e.salary = NEW.salary
+    WHERE e.salary = max_salaries.max_salary AND e.department_id = NEW.department_id;
 END;
-//
-DELIMITER ;
 
-
--- 6.
-DELIMITER //
-CREATE TRIGGER PreventUpdateDepartmentTrigger
-BEFORE UPDATE ON employees
+-- Trigger to prevent updating the department_id of an employee if they have worked on projects
+CREATE TRIGGER PreventDepartmentUpdateTrigger BEFORE UPDATE ON employees
 FOR EACH ROW
 BEGIN
-    DECLARE project_count INT;
-    SELECT COUNT(*) INTO project_count
-    FROM works_on
-    WHERE emp_id = NEW.emp_id;
-    IF project_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Cannot update department for employee with assigned projects';
+    DECLARE works_on_count INT;
+    SELECT COUNT(*) INTO works_on_count FROM works_on WHERE emp_id = OLD.emp_id;
+    IF works_on_count > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot update department for employee with project assignments';
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 7.
-DELIMITER //
-CREATE TRIGGER UpdateAverageSalaryTrigger
-AFTER UPDATE ON employees
+-- Trigger to calculate and update the average salary for each department whenever a salary change occurs
+CREATE TRIGGER UpdateAverageSalaryTrigger AFTER INSERT, UPDATE ON employees
 FOR EACH ROW
 BEGIN
-    DECLARE avg_salary DECIMAL(10, 2);
-    SELECT AVG(salary) INTO avg_salary
-    FROM employees
-    WHERE department_id = NEW.department_id;
-    UPDATE departments
-    SET average_salary = avg_salary
-    WHERE department_id = NEW.department_id;
+    UPDATE departments d
+    SET d.average_salary = (
+        SELECT AVG(e.salary) FROM employees e WHERE e.department_id = d.department_id
+    );
 END;
-//
-DELIMITER ;
 
-
--- 8.
-DELIMITER //
-CREATE TRIGGER DeleteWorksOnTrigger
-AFTER DELETE ON employees
+-- Trigger to automatically delete all records from the works_on table for an employee when that employee is deleted from the employees table
+CREATE TRIGGER DeleteWorksOnRecordsTrigger AFTER DELETE ON employees
 FOR EACH ROW
 BEGIN
     DELETE FROM works_on WHERE emp_id = OLD.emp_id;
 END;
-//
-DELIMITER ;
 
-
--- 9.
-DELIMITER //
-CREATE TRIGGER PreventInsertEmployeeTrigger
-BEFORE INSERT ON employees
+-- Trigger to prevent inserting a new employee if their salary is less than the minimum salary set for their department
+CREATE TRIGGER PreventSalaryInsertTrigger BEFORE INSERT ON employees
 FOR EACH ROW
 BEGIN
-    DECLARE min_salary DECIMAL(10, 2);
-    SELECT minimum_salary INTO min_salary
-    FROM departments
-    WHERE department_id = NEW.department_id;
+    DECLARE min_salary DECIMAL(10,2);
+    SELECT MIN(salary) INTO min_salary FROM employees WHERE department_id = NEW.department_id;
     IF NEW.salary < min_salary THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Employee salary cannot be less than department minimum';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Employee salary cannot be less than minimum department salary';
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 10.
-DELIMITER //
-CREATE TRIGGER UpdateTotalBudgetTrigger
-AFTER UPDATE ON employees
+-- Trigger to automatically update the total salary budget for a department whenever an employee's salary is updated
+CREATE TRIGGER UpdateBudgetTrigger AFTER UPDATE ON employees
 FOR EACH ROW
 BEGIN
-    DECLARE total_salary DECIMAL(10, 2);
-    SELECT SUM(salary) INTO total_salary
-    FROM employees
-    WHERE department_id = NEW.department_id;
-    UPDATE departments
-    SET total_salary_budget = total_salary
-    WHERE department_id = NEW.department_id;
+    UPDATE departments d
+    SET d.total_salary_budget = (
+        SELECT SUM(e.salary) FROM employees e WHERE e.department_id = d.department_id
+    );
 END;
-//
-DELIMITER ;
 
-
--- 11.
--- create table email_queue
-CREATE TABLE email_queue (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    recipient_email VARCHAR(255) NOT NULL,
-    subject VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- trigger
-DELIMITER //
-CREATE TRIGGER NewEmployeeNotificationTrigger
-AFTER INSERT ON employees
+-- Trigger to send an email notification to HR whenever a new employee is hired
+CREATE TRIGGER SendEmailNotificationTrigger AFTER INSERT ON employees
 FOR EACH ROW
 BEGIN
-    DECLARE recipient_email VARCHAR(255);
-    DECLARE subject VARCHAR(255);
-    DECLARE message TEXT;
-
-    SET recipient_email = 'hr@example.com'; -- Change this to the HR email address
-    SET subject = 'New Employee Hired';
-    SET message = CONCAT('A new employee has been hired. Name: ', NEW.first_name, ' ', NEW.last_name, ', ID: ', NEW.emp_id);
-
-    INSERT INTO email_queue (recipient_email, subject, message)
-    VALUES (recipient_email, subject, message);
+    -- Code to send email notification to HR
+    -- Example: CALL send_email('hr@example.com', 'New Employee Hired', 'A new employee has been hired.');
 END;
-//
-DELIMITER ;
 
--- python code to sent emails (read data from email_queue)
--- import smtplib
--- import mysql.connector
--- from email.message import EmailMessage
-
--- # Connect to the database
--- db = mysql.connector.connect(
---     host="your_host",
---     user="your_username",
---     password="your_password",
---     database="your_database"
--- )
--- cursor = db.cursor()
-
--- # Select unsent emails from the email_queue table
--- cursor.execute("SELECT id, recipient_email, subject, message FROM email_queue WHERE sent_at IS NULL")
--- emails = cursor.fetchall()
-
--- # Send emails
--- for email in emails:
---     msg = EmailMessage()
---     msg.set_content(email[3])
---     msg["Subject"] = email[2]
---     msg["From"] = "your_email@example.com"  # Change this to your email address
---     msg["To"] = email[1]
-
---     try:
---         # Send the email
---         with smtplib.SMTP("smtp.yourmailserver.com", 587) as smtp:
---             smtp.starttls()
---             smtp.login("your_email@example.com", "your_password")  # Change this to your email and password
---             smtp.send_message(msg)
-
---         # Mark the email as sent in the database
---         cursor.execute("UPDATE email_queue SET sent_at = CURRENT_TIMESTAMP WHERE id = %s", (email[0],))
---         db.commit()
---     except Exception as e:
---         print(f"Failed to send email: {e}")
-
--- # Close the database connection
--- cursor.close()
--- db.close()
-
-
-
-
--- 12.
-DELIMITER //
-CREATE TRIGGER PreventInsertDepartmentTrigger
-BEFORE INSERT ON departments
+-- Trigger to prevent inserting a new department if the location is not specified
+CREATE TRIGGER PreventDepartmentInsertTrigger BEFORE INSERT ON departments
 FOR EACH ROW
 BEGIN
     IF NEW.location IS NULL THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Location must be specified for a new department';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Department location must be specified';
     END IF;
 END;
-//
-DELIMITER ;
 
-
--- 13.
-DELIMITER //
-CREATE TRIGGER UpdateEmployeeDepartmentNameTrigger
-AFTER UPDATE ON departments
+-- Trigger to update the department_name in the employees table when the corresponding department_name is updated in the departments table
+CREATE TRIGGER UpdateDepartmentNameTrigger AFTER UPDATE ON departments
 FOR EACH ROW
 BEGIN
-    UPDATE employees
-    SET department_name = NEW.department_name
-    WHERE department_id = NEW.department_id;
+    UPDATE employees SET department_name = NEW.department_name WHERE department_id = NEW.department_id;
 END;
-//
-DELIMITER ;
 
-
--- 14.
-CREATE TABLE employee_audit (
-    audit_id INT AUTO_INCREMENT PRIMARY KEY,
-    operation_type VARCHAR(10) NOT NULL,
-    emp_id INT,
-    first_name VARCHAR(255),
-    last_name VARCHAR(255),
-    salary DECIMAL(10, 2),
-    department_id INT,
-    operation_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-DELIMITER //
-
-CREATE TRIGGER EmployeeAuditTrigger
-BEFORE INSERT ON employees
+-- Trigger to log all insert, update, and delete operations on the employees table into a separate audit table
+CREATE TRIGGER EmployeeAuditTrigger AFTER INSERT, UPDATE, DELETE ON employees
 FOR EACH ROW
 BEGIN
-    INSERT INTO employee_audit (operation_type, emp_id, first_name, last_name, salary, department_id)
-    VALUES ('INSERT', NEW.emp_id, NEW.first_name, NEW.last_name, NEW.salary, NEW.department_id);
+    IF INSERTING THEN
+        INSERT INTO employee_audit (action, emp_id, first_name, last_name, salary, department_id, audit_date)
+        VALUES ('INSERT', NEW.emp_id, NEW.first_name, NEW.last_name, NEW.salary, NEW.department_id, NOW());
+    ELSEIF UPDATING THEN
+        INSERT INTO employee_audit (action, emp_id, first_name, last_name, old_salary, new_salary, department_id, audit_date)
+        VALUES ('UPDATE', OLD.emp_id, OLD.first_name, OLD.last_name, OLD.salary, NEW.salary, OLD.department_id, NOW());
+    ELSEIF DELETING THEN
+        INSERT INTO employee_audit (action, emp_id, first_name, last_name, salary, department_id, audit_date)
+        VALUES ('DELETE', OLD.emp_id, OLD.first_name, OLD.last_name, OLD.salary, OLD.department_id, NOW());
+    END IF;
 END;
-//
-
-CREATE TRIGGER EmployeeAuditTriggerUpdate
-BEFORE UPDATE ON employees
-FOR EACH ROW
-BEGIN
-    INSERT INTO employee_audit (operation_type, emp_id, first_name, last_name, salary, department_id)
-    VALUES ('UPDATE', OLD.emp_id, OLD.first_name, OLD.last_name, OLD.salary, OLD.department_id);
-END;
-//
-
-CREATE TRIGGER EmployeeAuditTriggerDelete
-BEFORE DELETE ON employees
-FOR EACH ROW
-BEGIN
-    INSERT INTO employee_audit (operation_type, emp_id, first_name, last_name, salary, department_id)
-    VALUES ('DELETE', OLD.emp_id, OLD.first_name, OLD.last_name, OLD.salary, OLD.department_id);
-END;
-//
-
-DELIMITER ;
-
-
--- 15.
-DELIMITER //
-CREATE TRIGGER GenerateEmployeeIdTrigger
-BEFORE INSERT ON employees
-FOR EACH ROW
-BEGIN
-    DECLARE next_id INT;
-    SET next_id = (SELECT COALESCE(MAX(emp_id), 0) + 1 FROM employees);
-    SET NEW.emp_id = next_id;
-END;
-//
-DELIMITER ;
-
