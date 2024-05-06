@@ -1,1 +1,86 @@
-Paste your model jpg here 
+-- Table for storing information about stations
+CREATE TABLE Station (
+    station_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL
+);
+
+-- Table for storing information about trains
+CREATE TABLE Train (
+    train_id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) NOT NULL
+);
+
+-- Table for defining routes between stations
+CREATE TABLE Route (
+    route_id INT PRIMARY KEY,
+    origin_station_id INT,
+    destination_station_id INT,
+    train_id INT,
+    departure_time DATETIME,
+    arrival_time DATETIME,
+    FOREIGN KEY (origin_station_id) REFERENCES Station(station_id),
+    FOREIGN KEY (destination_station_id) REFERENCES Station(station_id),
+    FOREIGN KEY (train_id) REFERENCES Train(train_id)
+);
+
+-- Table for storing passenger information and ticket details
+CREATE TABLE Ticket (
+    ticket_id INT PRIMARY KEY,
+    passenger_name VARCHAR(255) NOT NULL,
+    route_id INT,
+    seat_number VARCHAR(20),
+    date_of_travel DATE,
+    FOREIGN KEY (route_id) REFERENCES Route(route_id)
+);
+
+-- Table for storing information about train schedules
+CREATE TABLE TrainSchedule (
+    schedule_id INT PRIMARY KEY,
+    train_id INT,
+    route_id INT,
+    departure_time DATETIME,
+    arrival_time DATETIME,
+    PRIMARY KEY (train_id, route_id),
+    FOREIGN KEY (train_id) REFERENCES Train(train_id),
+    FOREIGN KEY (route_id) REFERENCES Route(route_id)
+);
+
+-- Table for storing information about train compartments
+CREATE TABLE Compartment (
+    compartment_id INT PRIMARY KEY,
+    train_id INT,
+    type VARCHAR(50),
+    capacity INT,
+    FOREIGN KEY (train_id) REFERENCES Train(train_id)
+);
+
+-- Table for storing seat reservations
+CREATE TABLE SeatReservation (
+    reservation_id INT PRIMARY KEY,
+    ticket_id INT,
+    compartment_id INT,
+    seat_number VARCHAR(20),
+    FOREIGN KEY (ticket_id) REFERENCES Ticket(ticket_id),
+    FOREIGN KEY (compartment_id) REFERENCES Compartment(compartment_id)
+);
+
+-- Table for storing user accounts (passenger profiles)
+CREATE TABLE UserAccount (
+    user_id INT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    full_name VARCHAR(255) NOT NULL
+);
+
+-- Table for storing user bookings
+CREATE TABLE Booking (
+    booking_id INT PRIMARY KEY,
+    user_id INT,
+    ticket_id INT,
+    booking_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES UserAccount(user_id),
+    FOREIGN KEY (ticket_id) REFERENCES Ticket(ticket_id)
+);
