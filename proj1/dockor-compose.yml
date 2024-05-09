@@ -1,0 +1,58 @@
+# Use official Node.js image as the base image for building
+FROM node:14 AS builder
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
+
+# Install app dependencies for building
+RUN npm install --production
+
+# Copy the rest of the application code
+COPY . .
+
+# Build your Node.js application (e.g., compile TypeScript, bundle assets, etc.)
+RUN npm run build
+
+# Start a new stage to create a smaller production image
+FROM node:14-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy only necessary files from the previous stage (builder)
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/dist ./dist
+
+# Install only production dependencies
+RUN npm install --only=production
+
+# Expose the port your app runs on (adjust if needed)
+EXPOSE 3000
+
+# Set environment variables (customize based on your application's needs)
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Command to run your app using a non-root user (for improved security)
+USER node
+
+# Command to run your app
+CMD ["node", "dist/app.js"]
+
+
+docker run -d \
+  -e DB_HOST=<your_db_host> \
+  -e DB_USER=<your_db_user> \
+  -e DB_PASSWORD=<your_db_password> \
+  -e DB_NAME=<your_db_name> \
+  -p 3000:3000 \
+  --name node-sql-container \
+  node-sql-app
+
+
+
+docker build -t node-sql-app .
+
