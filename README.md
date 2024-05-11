@@ -73,7 +73,7 @@ The source code of this project is written in *PHP. So, you'll require **WAMP/XA
 
 ## Author
                              
-<img src="proj1/Database Final/public/images/Screenshot%2024-05-11%191114.png"/>
+<img src="proj1/Database Final/public/images/Screenshot 2024-05-11 191114.png"/>
                                                                                       
 
 *[Nirjay Kumar](https://)*                                                 
