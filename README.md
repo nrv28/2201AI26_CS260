@@ -63,7 +63,7 @@ The source code of this project is written in *PHP. So, you'll require **WAMP/XA
 
 ## How to run?
 
-1. Download [this](https://github.com/hariome62014/2201AI12_CS260/tree/main/proj1) repo and extract it in your *www/htdocs* directory. 
+1. Download [this](https://github.com/nrv28/2201AI26_CS260/tree/main/proj1) repo and extract it in your *www/htdocs* directory. 
 
 2. Import the [database] i.e. iitp.sql from *db* folder.
 
@@ -73,7 +73,8 @@ The source code of this project is written in *PHP. So, you'll require **WAMP/XA
 
 ## Author
 
-|                                                                                         <a><img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Profile-Photo2-removebg-preview.jpg" width="150px " height="170px" /></a>                                                                                         |
+|                                                                                         
+<a><img src="proj1/Database Final/public/images/Screenshot%2024-05-11%191114.png" width="150px " height="170px" /></a>                                                                                         |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |                                                                                                                                        *[Nirjay Kumar](https://)*                                                                                                                                        |
 |  |
