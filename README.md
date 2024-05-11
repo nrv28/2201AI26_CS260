@@ -11,6 +11,25 @@ This repository contains the codebase for the Faculty Recruitment Website for II
 - *Job Listings:* The website lists available faculty positions along with detailed descriptions and requirements.
 - *Application Submission:* Applicants can apply for specific positions by submitting their profiles along with required documents.
 
+
+## SnapShots
+   <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162307.png"/>
+      <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162341.png"/>
+         <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162410.png"/>
+            <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162436.png"/>
+               <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162507.png"/>
+                 <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162656.png"/>
+           
+             
+  <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20165826.png"/>
+
+
+
+
+
+
+
+
 ## Technology Stack Used
 
 ![HTML](https://img.shields.io/badge/frontend-html-orange.svg?logo=html5&style=flat-square) 
@@ -56,7 +75,7 @@ The source code of this project is written in *PHP. So, you'll require **WAMP/XA
 
 |                                                                                         <a><img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Profile-Photo2-removebg-preview.jpg" width="150px " height="170px" /></a>                                                                                         |
 | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                                                                        *[Nirjay Kumar](https://)*                                                                                                                                        |
+|                                                                                                                                        *[Hari Om Kumar](https://)*                                                                                                                                        |
 |  |
 
 
