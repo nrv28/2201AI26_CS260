@@ -72,13 +72,10 @@ The source code of this project is written in *PHP. So, you'll require **WAMP/XA
 4. Run **localhost/{YOUR FOLDER NAME}**
 
 ## Author
+                             
+<img src="proj1/Database Final/public/images/Screenshot%2024-05-11%191114.png"/>
+                                                                                      
 
-|                                 
-<img src="proj1/Database Final/public/images/Screenshot%2024-05-11%191114.png" width="150px " height="170px"/>
-                                                                                         |
-| :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|                                                                                                                                        *[Nirjay Kumar](https://)*                                                                                                                                        |
-|  |
-
+*[Nirjay Kumar](https://)*                                                 
 
 ## Thanks!
