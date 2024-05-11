@@ -13,15 +13,15 @@ This repository contains the codebase for the Faculty Recruitment Website for II
 
 
 ## SnapShots
-   <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162307.png"/>
-      <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162341.png"/>
-         <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162410.png"/>
-            <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162436.png"/>
-               <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162507.png"/>
-                 <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20162656.png"/>
+   <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162307.png"/>
+      <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162341.png"/>
+         <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162410.png"/>
+            <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162436.png"/>
+               <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162507.png"/>
+                 <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20162656.png"/>
            
              
-  <img src="https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/Templates/images/Screenshot%202024-05-10%20165826.png"/>
+  <img src="proj1/Database Final/public/images/Screenshot%202024-05-10%20165826.png"/>
 
 
 
