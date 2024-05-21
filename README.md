@@ -41,7 +41,7 @@ This repository contains the codebase for the Faculty Recruitment Website for II
 
 - Front End - *HTML, **CSS, **JavaScript*
 - Framewrok - *[Bootstrap](https://getbootstrap.com/)*
-- Back End - *PHP*
+- Back End - *NodeJS*
 - Database - *MySql*
 
 
@@ -49,7 +49,7 @@ This repository contains the codebase for the Faculty Recruitment Website for II
 
 ## Requirements
 
-[![PHP](https://img.shields.io/static/v1.svg?label=Source%20Code&message=php&logo=php&style=social)](https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/proj1.tex)
+[![NodeJS](https://img.shields.io/static/v1.svg?label=Source%20Code&message=php&logo=php&style=social)](https://github.com/hariome62014/2201AI12_CS260/blob/main/proj1/proj1.tex)
 
 The source code of this project is written in *PHP. So, you'll require **WAMP/XAMPP/MAMP* to run this project.
 
